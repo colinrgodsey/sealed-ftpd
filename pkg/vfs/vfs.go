@@ -21,20 +21,25 @@ const (
 
 // MainDriver implements ftpserver.MainDriver
 type MainDriver struct {
-	db *sql.DB
+	db            *sql.DB
+	passiveStart  int
+	passiveEnd    int
 }
 
 // NewMainDriver creates a new MainDriver
-func NewMainDriver(db *sql.DB) *MainDriver {
+func NewMainDriver(db *sql.DB, passiveStart, passiveEnd int) *MainDriver {
 	return &MainDriver{
-		db: db,
+		db:           db,
+		passiveStart: passiveStart,
+		passiveEnd:   passiveEnd,
 	}
 }
 
 // GetSettings returns the server settings
 func (d *MainDriver) GetSettings() (*ftpserver.Settings, error) {
 	return &ftpserver.Settings{
-		ListenAddr: ":2121",
+		ListenAddr:               ":2121",
+		PassiveTransferPortRange: ftpserver.PortRange{Start: d.passiveStart, End: d.passiveEnd},
 	}, nil
 }
 

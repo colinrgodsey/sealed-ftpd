@@ -26,11 +26,13 @@ when that step of the implementation is done.
 The development plan folder should be markdown files, prefixed with a number to
 indicate the sequence for each step (these can be thought of as ticket numbers).
 The implementation notes should have a markdown file with implementation notes
-for each of these steps when that step is performed. Each implementation step should
+for each of these steps when that step is performed. These notes should include
+thoughts around the integration, challenges faced, and any learnings.
+Each implementation step should
 also be completed with a new git commit to the local repo.
 
 ## Standards
 
 Each integration step (and commit) should have unit tests written whenever there
-is code written. The unit tests must be run and pass before that integration step is
+is code written. All unit tests (`go test ./...`) must be run and pass before that integration step is
 complete and ready to commit.

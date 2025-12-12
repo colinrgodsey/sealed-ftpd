@@ -22,7 +22,7 @@ func setupTestDB(t *testing.T) (*sql.DB, *MainDriver, func()) {
 		t.Fatalf("Failed to create schema: %v", err)
 	}
 
-	driver := NewMainDriver(dbConn)
+	driver := NewMainDriver(dbConn, 30000, 30009)
 
 	return dbConn, driver, func() {
 		dbConn.Close()
