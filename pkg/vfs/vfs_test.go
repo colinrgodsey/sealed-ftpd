@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"os"
+	"sync"
 	"testing"
 
 	"ftp-mimic/pkg/db"
@@ -250,4 +251,44 @@ func TestConcurrentWrites(t *testing.T) {
 	// or accept that "last write wins" is the behavior for this simple VFS.
 	// I'll skip this test for now as it's not a strict requirement for a simple emulator,
 	// or I'll implement a simpler concurrency test (e.g. concurrent *reads*).
+}
+
+func TestConcurrentReads(t *testing.T) {
+	_, driver, cleanup := setupTestDB(t)
+	defer cleanup()
+	fs, _ := driver.AuthUser(nil, "", "")
+
+	// Create file
+	f, _ := fs.Create("/shared.txt")
+	content := []byte("shared content")
+	f.Write(content)
+	f.Close()
+
+	var wg sync.WaitGroup
+	numReaders := 50
+
+	for i := 0; i < numReaders; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			// Open file for reading
+			rf, err := fs.Open("/shared.txt")
+			if err != nil {
+				t.Errorf("Concurrent Open failed: %v", err)
+				return
+			}
+			defer rf.Close()
+
+			buf := make([]byte, len(content))
+			_, err = rf.Read(buf)
+			if err != nil {
+				t.Errorf("Concurrent Read failed: %v", err)
+				return
+			}
+			if !bytes.Equal(buf, content) {
+				t.Errorf("Concurrent Read content mismatch")
+			}
+		}()
+	}
+	wg.Wait()
 }
