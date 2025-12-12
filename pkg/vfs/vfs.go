@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -374,7 +373,7 @@ func (f *SqliteFile) Close() error {
 	}
 	if f.flag&os.O_WRONLY != 0 || f.flag&os.O_RDWR != 0 || f.flag&os.O_APPEND != 0 || f.flag&os.O_CREATE != 0 {
 		if int64(len(f.content)) > MaxFileSize {
-			return fmt.Errorf("file too large")
+			return ftpserver.ErrStorageExceeded
 		}
 		_, err := f.fs.db.Exec("UPDATE files SET content = ?, size = ?, mod_time = ? WHERE path = ?", f.content, len(f.content), time.Now(), f.path)
 		return err
@@ -430,7 +429,7 @@ func (f *SqliteFile) Write(p []byte) (n int, err error) {
 	}
 	
 	if int64(len(f.content)) + int64(len(p)) > MaxFileSize {
-		return 0, fmt.Errorf("exceeded max file size")
+		return 0, ftpserver.ErrStorageExceeded
 	}
 
 	if f.pos >= int64(len(f.content)) {

@@ -8,6 +8,7 @@ import (
 
 	"ftp-mimic/pkg/db"
 
+	ftpserver "github.com/fclairamb/ftpserverlib"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -187,8 +188,8 @@ func TestSizeLimit(t *testing.T) {
 	// Write 1 byte over limit
 	largeData := make([]byte, 10*1024*1024+1)
 	_, err := f.Write(largeData)
-	if err == nil {
-		t.Error("Expected error writing > MaxFileSize")
+	if err != ftpserver.ErrStorageExceeded {
+		t.Errorf("Expected ErrStorageExceeded, got %v", err)
 	}
 }
 
