@@ -1,0 +1,12 @@
+github.com/fclairamb/ftpserverlib v0.27.0 h1:HcCdVNTs9Irc0T/eHRqkcGkOejwg39WiqBdt2vLZIpE=
+github.com/fclairamb/ftpserverlib v0.27.0/go.mod h1:Wi6QrU/oxgjSgcDjFUxQHlkJfVU/94t4+zNufrkdNU8=
+github.com/fclairamb/go-log v0.6.0 h1:1V7BJ75P2PvanLHRyGBBFjncB6d4AgEmu+BPWKbMkaU=
+github.com/fclairamb/go-log v0.6.0/go.mod h1:cyXxOw4aJwO6lrZb8GRELSw+sxO6wwkLJdsjY5xYCWA=
+github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuErjs=
+github.com/mattn/go-sqlite3 v1.14.32/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
+github.com/spf13/afero v1.14.0 h1:9tH6MapGnn/j0eb0yIXiLjERO8RB6xIVZRDCX7PtqWA=
+github.com/spf13/afero v1.14.0/go.mod h1:acJQ8t0ohCGuMN3O+Pv0V0hgMxNYDlvdk+VTfyZmbYo=
+golang.org/x/sys v0.35.0 h1:vz1N37gP5bs89s7He8XuIYXpyY0+QlsKmzipCbUtyxI=
+golang.org/x/sys v0.35.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
+golang.org/x/text v0.23.0 h1:D71I7dUrlY+VX0gQShAThNGHFxZ13dGLBHQLVl1mJlY=
+golang.org/x/text v0.23.0/go.mod h1:/BLNzu4aZCJ1+kcD0DNRotWKage4q2rGVAg4o22unh4=
