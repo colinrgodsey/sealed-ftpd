@@ -6,6 +6,7 @@ import (
 	stdlog "log" // Alias standard log
 	"log/slog"   // Standard library slog
 	"os"
+	"time" // Added missing import
 
 	"ftp-mimic/pkg/db"
 	"ftp-mimic/pkg/vfs"
@@ -17,6 +18,8 @@ import (
 func main() {
 	passiveStart := flag.Int("passive-port-start", 20000, "Start of the passive port range")
 	passiveEnd := flag.Int("passive-port-end", 20009, "End of the passive port range")
+	listenAddr := flag.String("listen-addr", "127.0.0.1:2121", "Address to listen on (e.g., 0.0.0.0:2121)")
+	connectionTimeout := flag.Duration("connection-timeout", 5*time.Minute, "Connection timeout duration (e.g., 5m)")
 	flag.Parse()
 
 	// Initialize the database
@@ -28,7 +31,7 @@ func main() {
 	defer sqliteDB.Close()
 
 	// Create our MainDriver
-	mainDriver := vfs.NewMainDriver(sqliteDB, *passiveStart, *passiveEnd)
+	mainDriver := vfs.NewMainDriver(sqliteDB, *passiveStart, *passiveEnd, *listenAddr, *connectionTimeout)
 
 	// Create the FTP server
 	ftpServer := ftpserver.NewFtpServer(mainDriver)
