@@ -15,7 +15,7 @@ func InitDB(dbPath string) (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
-	if err := createSchema(db); err != nil {
+	if err := CreateSchema(db); err != nil {
 		db.Close()
 		return nil, err
 	}
@@ -23,7 +23,8 @@ func InitDB(dbPath string) (*sql.DB, error) {
 	return db, nil
 }
 
-func createSchema(db *sql.DB) error {
+// CreateSchema creates the database schema.
+func CreateSchema(db *sql.DB) error {
 	schema := `
 	CREATE TABLE IF NOT EXISTS files (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,10 +46,11 @@ func createSchema(db *sql.DB) error {
 	}
 
 	// Ensure root directory exists
-	return ensureRoot(db)
+	return EnsureRoot(db)
 }
 
-func ensureRoot(db *sql.DB) error {
+// EnsureRoot ensures the root directory '/' exists in the database.
+func EnsureRoot(db *sql.DB) error {
 	var count int
 	err := db.QueryRow("SELECT COUNT(*) FROM files WHERE path = '/'").Scan(&count)
 	if err != nil {
@@ -59,7 +61,7 @@ func ensureRoot(db *sql.DB) error {
 		_, err = db.Exec(`
 			INSERT INTO files (path, parent_path, name, is_dir, size, mod_time)
 			VALUES ('/', '', '/', 1, 0, ?)
-		`, time.Now())
+		`, time.Now().Format(time.RFC3339))
 		if err != nil {
 			return fmt.Errorf("failed to insert root directory: %w", err)
 		}
