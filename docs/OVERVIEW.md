@@ -8,6 +8,13 @@ exactly like an FTP file system, but the backing data store is all in SQLite.
 It will be written in Go, and should follow Go best practices (especially around
 concurrency, coroutines, flow control).
 
+## Scope & Constraints
+
+*   **Authentication:** The server requires no authentication (anonymous access or accepts any credentials).
+*   **Networking:** Priority is on **Passive Mode** support to ensure compatibility with modern network environments.
+*   **Performance:** The system is designed for **high concurrency** (supporting several hundred concurrent users).
+*   **Storage Limits:** To maintain performance while storing files as BLOBs in SQLite, there is a strict **10MB file size limit**.
+
 ## Development and Integration
 
 The docs folder in this project stores this high-level project overview. There
