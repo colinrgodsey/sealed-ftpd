@@ -5,7 +5,7 @@ This step involves creating and running a dedicated stress test to verify the se
 ## Goals
 
 1.  **High Concurrency Simulation:**
-    *   Simulate 1000 concurrent users connecting to the server.
+    *   Simulate 10000 concurrent users connecting to the server.
     *   Each simulated user should perform a sequence of standard FTP operations (e.g., Login, List, Upload small file, Download, Delete).
 
 2.  **Stability Verification:**
