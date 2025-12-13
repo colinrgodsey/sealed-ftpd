@@ -196,11 +196,11 @@ func TestIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RETR failed: %v", err)
 	}
-	defer r.Close()
 	downloadedContent, err := io.ReadAll(r)
 	if err != nil {
 		t.Fatalf("Reading downloaded content failed: %v", err)
 	}
+	r.Close() // Explicitly close to read the pending '226' response
 	if string(downloadedContent) != uploadContent {
 		t.Errorf("Downloaded content mismatch. Expected '%s', got '%s'", uploadContent, downloadedContent)
 	}
@@ -234,11 +234,11 @@ func TestIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RETR after APPE failed: %v", err)
 	}
-	defer r.Close()
 	fullContent, err := io.ReadAll(r)
 	if err != nil {
 		t.Fatalf("Reading full content after APPE failed: %v", err)
 	}
+	r.Close() // Explicitly close to read the pending '226' response
 	expectedFullContent := uploadContent + appendContent
 	if string(fullContent) != expectedFullContent {
 		t.Errorf("Appended content mismatch. Expected '%s', got '%s'", expectedFullContent, fullContent)

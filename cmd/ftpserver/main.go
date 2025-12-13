@@ -1,13 +1,13 @@
 package main
 
 import (
-	"flag"
 	"fmt" // For Sprintf
 	stdlog "log" // Alias standard log
 	"log/slog"   // Standard library slog
 	"os"
-	"time" // Added missing import
+	"strings"
 
+	"ftp-mimic/pkg/config" // New config package
 	"ftp-mimic/pkg/db"
 	"ftp-mimic/pkg/vfs"
 
@@ -16,29 +16,39 @@ import (
 )
 
 func main() {
-	passiveStart := flag.Int("passive-port-start", 20000, "Start of the passive port range")
-	passiveEnd := flag.Int("passive-port-end", 20009, "End of the passive port range")
-	listenAddr := flag.String("listen-addr", "127.0.0.1:2121", "Address to listen on (e.g., 0.0.0.0:2121)")
-	connectionTimeout := flag.Duration("connection-timeout", 5*time.Minute, "Connection timeout duration (e.g., 5m)")
-	flag.Parse()
+	cfg := config.ParseFlags()
 
 	// Initialize the database
-	dbPath := "./ftp-mimic.db" // Default DB file
-	sqliteDB, err := db.InitDB(dbPath)
+	sqliteDB, err := db.InitDB(cfg.DBPath)
 	if err != nil {
 		stdlog.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer sqliteDB.Close()
 
 	// Create our MainDriver
-	mainDriver := vfs.NewMainDriver(sqliteDB, *passiveStart, *passiveEnd, *listenAddr, *connectionTimeout)
+	mainDriver := vfs.NewMainDriver(sqliteDB, cfg.PassivePortStart, cfg.PassivePortEnd, cfg.ListenAddr, cfg.ConnectionTimeout)
 
 	// Create the FTP server
 	ftpServer := ftpserver.NewFtpServer(mainDriver)
 
+	// Determine log level
+	var logLevel slog.Level
+	switch strings.ToLower(cfg.LogLevel) {
+	case "debug":
+		logLevel = slog.LevelDebug
+	case "info":
+		logLevel = slog.LevelInfo
+	case "warn":
+		logLevel = slog.LevelWarn
+	case "error":
+		logLevel = slog.LevelError
+	default:
+		logLevel = slog.LevelInfo
+	}
+
 	// Create a standard slog logger
 	slogLogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelDebug,
+		Level: logLevel,
 	}))
 
 	// Wrap the slog logger with the go-log adapter

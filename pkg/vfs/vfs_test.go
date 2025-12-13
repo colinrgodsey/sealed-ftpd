@@ -6,6 +6,7 @@ import (
 	"os"
 	"sync"
 	"testing"
+	"time"
 
 	"ftp-mimic/pkg/db"
 
@@ -24,7 +25,7 @@ func setupTestDB(t *testing.T) (*sql.DB, *MainDriver, func()) {
 		t.Fatalf("Failed to create schema: %v", err)
 	}
 
-	driver := NewMainDriver(dbConn, 30000, 30009)
+	driver := NewMainDriver(dbConn, 30000, 30009, "127.0.0.1:0", 5*time.Second)
 
 	return dbConn, driver, func() {
 		dbConn.Close()

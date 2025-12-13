@@ -389,12 +389,17 @@ func (f *SqliteFile) Close() error {
 	}
 	if f.flag&os.O_WRONLY != 0 || f.flag&os.O_RDWR != 0 || f.flag&os.O_APPEND != 0 || f.flag&os.O_CREATE != 0 {
 		vfsLogger.Debug("SqliteFile.Close called (writing)", "path", f.path, "len_content_before_update", len(f.content))
-		_, err := f.fs.db.Exec("UPDATE files SET content = ?, size = ?, mod_time = ? WHERE path = ?", f.content, len(f.content), time.Now(), f.path)
+		res, err := f.fs.db.Exec("UPDATE files SET content = ?, size = ?, mod_time = ? WHERE path = ?", f.content, len(f.content), time.Now(), f.path)
 		if err != nil {
             vfsLogger.Error("Failed to update file content on close", "path", f.path, "error", err)
             return fmt.Errorf("failed to update file %s: %w", f.path, err)
         }
-		vfsLogger.Debug("SqliteFile.Close success", "path", f.path, "size", len(f.content))
+		rows, _ := res.RowsAffected()
+		if rows == 0 {
+			vfsLogger.Debug("SqliteFile.Close: no rows updated (file likely deleted or missing)", "path", f.path)
+		} else {
+			vfsLogger.Debug("SqliteFile.Close success", "path", f.path, "size", len(f.content))
+		}
 		return nil
 	}
 	return nil
@@ -572,5 +577,5 @@ func normalizePath(p string) string {
 	if !strings.HasPrefix(p, "/") {
 		p = "/" + p
 	}
-	return filepath.Clean(p)
+	return filepath.ToSlash(filepath.Clean(p))
 }
