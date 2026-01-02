@@ -13,14 +13,14 @@ import (
 	"testing"
 	"time"
 
-	"ftp-mimic/pkg/db"
-	"ftp-mimic/pkg/vfs"
+	"github.com/colinrgodsey/sealed-ftpd/pkg/db"
+	"github.com/colinrgodsey/sealed-ftpd/pkg/vfs"
+
+	"log/slog"
 
 	ftpserver "github.com/fclairamb/ftpserverlib"
-	golog_slog "github.com/fclairamb/go-log/slog"
 	"github.com/hashicorp/go-multierror" // Added for multierror handling
 	"github.com/jlaffaye/ftp"
-	"log/slog"
 )
 
 // checkDbFile directly queries the database for file info
@@ -85,7 +85,7 @@ func setupServer(t *testing.T, dbPath string) (addr string, dbConn *sql.DB, clea
 	slogLogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug, // Use Debug level for tests
 	}))
-	ftpServer.Logger = golog_slog.NewWrap(slogLogger)
+	ftpServer.Logger = slogLogger
 
 	var wg sync.WaitGroup
 	wg.Add(1)

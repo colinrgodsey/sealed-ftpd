@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"ftp-mimic/pkg/db"
+	"github.com/colinrgodsey/sealed-ftpd/pkg/db"
 
 	ftpserver "github.com/fclairamb/ftpserverlib"
 	_ "github.com/mattn/go-sqlite3"
@@ -90,7 +90,7 @@ func TestFileOps(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Create failed: %v", err)
 	}
-	
+
 	content := []byte("hello world")
 	n, err := f.Write(content)
 	if err != nil {
@@ -123,7 +123,7 @@ func TestReaddir(t *testing.T) {
 	fs, _ := driver.AuthUser(nil, "", "")
 
 	fs.Mkdir("/dir", 0755)
-	
+
 	f1, _ := fs.Create("/dir/f1.txt")
 	f1.Close()
 	f2, _ := fs.Create("/dir/f2.txt")
@@ -143,7 +143,7 @@ func TestReaddir(t *testing.T) {
 	if len(infos) != 2 {
 		t.Errorf("Expected 2 files, got %d", len(infos))
 	}
-	
+
 	names := make(map[string]bool)
 	for _, info := range infos {
 		names[info.Name()] = true
@@ -199,7 +199,7 @@ func TestRename(t *testing.T) {
 	_, driver, cleanup := setupTestDB(t)
 	defer cleanup()
 	fs, _ := driver.AuthUser(nil, "", "")
-	
+
 	// Create file
 	f, _ := fs.Create("/old.txt")
 	f.Write([]byte("content"))
@@ -214,7 +214,7 @@ func TestRename(t *testing.T) {
 	if !os.IsNotExist(err) {
 		t.Error("Old file still exists")
 	}
-	
+
 	fi, err := fs.Stat("/new.txt")
 	if err != nil {
 		t.Error("New file missing")
@@ -227,16 +227,16 @@ func TestConcurrentWrites(t *testing.T) {
 	_, driver, cleanup := setupTestDB(t)
 	defer cleanup()
 	fs, _ := driver.AuthUser(nil, "", "")
-	
+
 	// Simply create the file first
 	f, _ := fs.Create("/concurrent.txt")
 	f.Close()
 
 	// Append concurrently
-	// Note: Our naive implementation handles concurrency via DB, 
+	// Note: Our naive implementation handles concurrency via DB,
 	// but the 'content' slice in SqliteFile is not thread-safe if shared.
 	// However, each Open call returns a new SqliteFile struct.
-	// So each goroutine has its own buffer. 
+	// So each goroutine has its own buffer.
 	// The potential race is on the DB update at Close.
 	// SQLite handles concurrent writes by locking.
 	// But since we overwrite the whole content on Close, last writer wins?
@@ -248,7 +248,7 @@ func TestConcurrentWrites(t *testing.T) {
 	// This is a known limitation of the "buffer in memory" approach without a transactional lock or "append-only" logic in DB.
 	// For FTP, usually only one client writes to a file at a time (locked).
 	// If we want to support concurrent appends, we'd need a more complex DB schema (chunks) or explicit locking.
-	// Given the scope, I will skip a heavy concurrent append test that expects perfect merging, 
+	// Given the scope, I will skip a heavy concurrent append test that expects perfect merging,
 	// or accept that "last write wins" is the behavior for this simple VFS.
 	// I'll skip this test for now as it's not a strict requirement for a simple emulator,
 	// or I'll implement a simpler concurrency test (e.g. concurrent *reads*).

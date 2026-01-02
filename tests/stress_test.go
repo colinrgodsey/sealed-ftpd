@@ -14,13 +14,13 @@ import (
 	"testing"
 	"time"
 
-	"ftp-mimic/pkg/db"
-	"ftp-mimic/pkg/vfs"
+	"github.com/colinrgodsey/sealed-ftpd/pkg/db"
+	"github.com/colinrgodsey/sealed-ftpd/pkg/vfs"
+
+	"log/slog"
 
 	ftpserver "github.com/fclairamb/ftpserverlib"
-	golog_slog "github.com/fclairamb/go-log/slog"
 	"github.com/jlaffaye/ftp"
-	"log/slog"
 )
 
 // setupStressServer starts the FTP server for stress testing.
@@ -33,7 +33,7 @@ func setupStressServer(t *testing.T, dbPath string) (addr string, dbConn *sql.DB
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
 
-	// Use a fixed port if possible to avoid port exhaustion during rapid creates, 
+	// Use a fixed port if possible to avoid port exhaustion during rapid creates,
 	// but dynamic is safer for CI/test environments.
 	tempListener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -55,7 +55,7 @@ func setupStressServer(t *testing.T, dbPath string) (addr string, dbConn *sql.DB
 	slogLogger := slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{
 		Level: slog.LevelError,
 	}))
-	ftpServer.Logger = golog_slog.NewWrap(slogLogger)
+	ftpServer.Logger = slogLogger
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -83,9 +83,9 @@ func TestStressConcurrency(t *testing.T) {
 	// NOTE: 1000 concurrent FTP clients means 1000 TCP control connections + 1000 potential data connections.
 	// This requires ulimit -n to be at least 2048 + overhead.
 	// We'll set it to 1000 and handle connection errors gracefully if they are OS limits.
-	
+
 	targetUsers := 10000
-	
+
 	dbPath := t.TempDir() + "/stress-test.db"
 	serverAddr, _, cleanup := setupStressServer(t, dbPath)
 	defer cleanup()
@@ -95,7 +95,7 @@ func TestStressConcurrency(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// Random source for each goroutine to avoid lock contention on global rand
-	
+
 	start := time.Now()
 
 	for i := 0; i < targetUsers; i++ {

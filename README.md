@@ -1,6 +1,6 @@
-# FTP Mimic Server
+# Sealed FTP Server
 
-This project implements an FTP server that stores all its files and directories within a single SQLite database. It serves as a proof-of-concept to mimic FTP functionality with a non-traditional backend.
+This project implements an FTP server that stores all its files and directories within a single SQLite database. It serves as a proof-of-concept to mimic FTP functionality with a non-traditional backend, providing a FTP server with a sealed storage backend.
 
 ## Features
 
@@ -18,10 +18,10 @@ This project implements an FTP server that stores all its files and directories 
 
 ### Build
 
-To build the FTP Mimic server:
+To build the FTP server:
 
 ```bash
-go build -o ftp-mimic-server ./cmd/ftpserver
+go build -o github.com/colinrgodsey/sealed-ftpd-server ./cmd/ftpserver
 ```
 
 ### Run
@@ -29,7 +29,7 @@ go build -o ftp-mimic-server ./cmd/ftpserver
 To run the server:
 
 ```bash
-./ftp-mimic-server
+./github.com/colinrgodsey/sealed-ftpd-server
 ```
 
 **Configuration Options:**
@@ -40,13 +40,13 @@ You can configure the server using command-line flags:
 -   `--passive-port-start`: Start of the passive port range (default: `20000`)
 -   `--passive-port-end`: End of the passive port range (default: `20009`)
 -   `--connection-timeout`: Connection timeout duration (default: `5m`)
--   `--db-path`: Path to the SQLite database file (default: `./ftp-mimic.db`)
+-   `--db-path`: Path to the SQLite database file (default: `./github.com/colinrgodsey/sealed-ftpd.db`)
 -   `--log-level`: Logging level (debug, info, warn, error) (default: `info`)
 
 **Example:**
 
 ```bash
-./ftp-mimic-server --listen-addr "0.0.0.0:21" --passive-port-start 50000 --passive-port-end 50010 --log-level debug
+./github.com/colinrgodsey/sealed-ftpd-server --listen-addr "0.0.0.0:21" --passive-port-start 50000 --passive-port-end 50010 --log-level debug
 ```
 
 ## Testing

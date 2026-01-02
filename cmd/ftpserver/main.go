@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt" // For Sprintf
+	"fmt"        // For Sprintf
 	stdlog "log" // Alias standard log
 	"log/slog"   // Standard library slog
 	"os"
 	"strings"
 
-	"ftp-mimic/pkg/config" // New config package
-	"ftp-mimic/pkg/db"
-	"ftp-mimic/pkg/vfs"
+	"github.com/colinrgodsey/sealed-ftpd/pkg/config" // New config package
+	"github.com/colinrgodsey/sealed-ftpd/pkg/db"
+	"github.com/colinrgodsey/sealed-ftpd/pkg/vfs"
 
 	ftpserver "github.com/fclairamb/ftpserverlib"
-	golog_slog "github.com/fclairamb/go-log/slog" // Adapter for slog
 )
 
 func main() {
@@ -51,8 +50,8 @@ func main() {
 		Level: logLevel,
 	}))
 
-	// Wrap the slog logger with the go-log adapter
-	ftpServer.Logger = golog_slog.NewWrap(slogLogger)
+	// Set the slog logger directly
+	ftpServer.Logger = slogLogger
 
 	settings, err := mainDriver.GetSettings()
 	if err != nil {

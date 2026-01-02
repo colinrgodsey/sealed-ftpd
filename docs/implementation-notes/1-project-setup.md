@@ -2,7 +2,7 @@
 
 ## Implementation Details
 
--   Initialized Go module `ftp-mimic`.
+-   Initialized Go module `github.com/colinrgodsey/sealed-ftpd`.
 -   Initialized Git repository.
 -   Added `.gitignore` for Go projects.
 -   Added dependencies:
