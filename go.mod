@@ -1,6 +1,6 @@
 module ftp-mimic
 
-go 1.24.4
+go 1.24
 
 require (
 	github.com/fclairamb/ftpserverlib v0.27.0
