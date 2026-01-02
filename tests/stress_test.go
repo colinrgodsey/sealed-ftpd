@@ -84,7 +84,7 @@ func TestStressConcurrency(t *testing.T) {
 	// This requires ulimit -n to be at least 2048 + overhead.
 	// We'll set it to 1000 and handle connection errors gracefully if they are OS limits.
 
-	targetUsers := 10000
+	targetUsers := 1000
 
 	dbPath := t.TempDir() + "/stress-test.db"
 	serverAddr, _, cleanup := setupStressServer(t, dbPath)
