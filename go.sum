@@ -2,8 +2,6 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fclairamb/ftpserverlib v0.28.0 h1:SdQYxxpAM6Y+FGffKAHCcPxLIdagNOCqOmY1WXYJfe0=
 github.com/fclairamb/ftpserverlib v0.28.0/go.mod h1:oiQyZ8h8P5zuZhIkZ+SdZvU69gSHZZVuKdhIdZ+RSxI=
-github.com/fclairamb/go-log v0.6.0 h1:1V7BJ75P2PvanLHRyGBBFjncB6d4AgEmu+BPWKbMkaU=
-github.com/fclairamb/go-log v0.6.0/go.mod h1:cyXxOw4aJwO6lrZb8GRELSw+sxO6wwkLJdsjY5xYCWA=
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
 github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY2I=
 github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=

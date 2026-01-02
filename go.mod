@@ -6,7 +6,6 @@ toolchain go1.24.4
 
 require (
 	github.com/fclairamb/ftpserverlib v0.28.0
-	github.com/fclairamb/go-log v0.6.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jlaffaye/ftp v0.2.0
 	github.com/mattn/go-sqlite3 v1.14.33

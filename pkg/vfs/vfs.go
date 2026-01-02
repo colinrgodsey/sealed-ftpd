@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"errors"
-	"fmt" 
+	"fmt"
 	"io"
 	"log/slog" // Added for logging
 	"os"
@@ -146,7 +146,7 @@ func (fs *SQLiteFs) Open(name string) (afero.File, error) {
 
 func (fs *SQLiteFs) OpenFile(name string, flag int, perm os.FileMode) (afero.File, error) {
 	name = normalizePath(name)
-	
+
 	var fileInfo FileInfo
 	var modTimeStr string
 	var content []byte
@@ -158,13 +158,13 @@ func (fs *SQLiteFs) OpenFile(name string, flag int, perm os.FileMode) (afero.Fil
 	`, name)
 
 	err := row.Scan(&fileInfo.name, &fileInfo.size, &fileInfo.isDir, &modTimeStr, &fileInfo.path, &content)
-	
+
 	// Handle creation
 	if err == sql.ErrNoRows {
 		if flag&os.O_CREATE != 0 {
 			parentPath := filepath.Dir(name)
 			baseName := filepath.Base(name)
-			
+
 			// Check parent exists
 			var parentIsDir bool
 			err := fs.db.QueryRow("SELECT is_dir FROM files WHERE path = ?", parentPath).Scan(&parentIsDir)
@@ -184,7 +184,7 @@ func (fs *SQLiteFs) OpenFile(name string, flag int, perm os.FileMode) (afero.Fil
 			if err != nil {
 				return nil, err
 			}
-			
+
 			return &SqliteFile{
 				path:    name,
 				fs:      fs,
@@ -258,7 +258,7 @@ func (fs *SQLiteFs) Remove(name string) error {
 		}
 		if count > 0 {
 			// Directory not empty
-			return &os.PathError{Op: "remove", Path: name, Err: errors.New("directory not empty")} 
+			return &os.PathError{Op: "remove", Path: name, Err: errors.New("directory not empty")}
 		}
 	}
 
@@ -277,7 +277,7 @@ func (fs *SQLiteFs) Rename(oldname, newname string) error {
 	if oldname == "/" || newname == "/" {
 		return os.ErrInvalid
 	}
-	
+
 	// Check old exists
 	var oldIsDir bool
 	err := fs.db.QueryRow("SELECT is_dir FROM files WHERE path = ?", oldname).Scan(&oldIsDir)
@@ -305,7 +305,7 @@ func (fs *SQLiteFs) Rename(oldname, newname string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	// Update children if dir
 	if oldIsDir {
 		_, err = tx.Exec("UPDATE files SET parent_path = ? WHERE parent_path = ?", newname, oldname)
@@ -324,7 +324,7 @@ func (fs *SQLiteFs) Rename(oldname, newname string) error {
 
 func (fs *SQLiteFs) Stat(name string) (os.FileInfo, error) {
 	name = normalizePath(name)
-	
+
 	var fileInfo FileInfo
 	var modTimeStr string
 
@@ -391,9 +391,9 @@ func (f *SqliteFile) Close() error {
 		vfsLogger.Debug("SqliteFile.Close called (writing)", "path", f.path, "len_content_before_update", len(f.content))
 		res, err := f.fs.db.Exec("UPDATE files SET content = ?, size = ?, mod_time = ? WHERE path = ?", f.content, len(f.content), time.Now(), f.path)
 		if err != nil {
-            vfsLogger.Error("Failed to update file content on close", "path", f.path, "error", err)
-            return fmt.Errorf("failed to update file %s: %w", f.path, err)
-        }
+			vfsLogger.Error("Failed to update file content on close", "path", f.path, "error", err)
+			return fmt.Errorf("failed to update file %s: %w", f.path, err)
+		}
 		rows, _ := res.RowsAffected()
 		if rows == 0 {
 			vfsLogger.Debug("SqliteFile.Close: no rows updated (file likely deleted or missing)", "path", f.path)
@@ -451,8 +451,8 @@ func (f *SqliteFile) Write(p []byte) (n int, err error) {
 	if f.isDir {
 		return 0, os.ErrInvalid
 	}
-	
-	if int64(len(f.content)) + int64(len(p)) > MaxFileSize {
+
+	if int64(len(f.content))+int64(len(p)) > MaxFileSize {
 		vfsLogger.Warn("SqliteFile.Write: write would exceed MaxFileSize, deleting file", "path", f.path, "current_len", len(f.content), "write_len", len(p), "max_size", MaxFileSize)
 		_, deleteErr := f.fs.db.Exec("DELETE FROM files WHERE path = ?", f.path)
 		if deleteErr != nil {
@@ -507,7 +507,7 @@ func (f *SqliteFile) Readdir(count int) ([]os.FileInfo, error) {
 			fi.modTime, _ = time.Parse("2006-01-02 15:04:05", modTimeStr)
 		}
 		infos = append(infos, &fi)
-		
+
 		if count > 0 && len(infos) >= count {
 			break
 		}
@@ -532,7 +532,7 @@ func (f *SqliteFile) Stat() (os.FileInfo, error) {
 }
 
 func (f *SqliteFile) Sync() error {
-	return nil 
+	return nil
 }
 
 func (f *SqliteFile) Truncate(size int64) error {
@@ -561,13 +561,13 @@ type FileInfo struct {
 	path    string
 }
 
-func (fi *FileInfo) Name() string       { return fi.name }
-func (fi *FileInfo) Size() int64        { return fi.size }
-func (fi *FileInfo) Mode() os.FileMode  { 
-	if fi.isDir { 
-		return os.ModeDir | 0755 
-	} 
-	return 0644 
+func (fi *FileInfo) Name() string { return fi.name }
+func (fi *FileInfo) Size() int64  { return fi.size }
+func (fi *FileInfo) Mode() os.FileMode {
+	if fi.isDir {
+		return os.ModeDir | 0755
+	}
+	return 0644
 }
 func (fi *FileInfo) ModTime() time.Time { return fi.modTime }
 func (fi *FileInfo) IsDir() bool        { return fi.isDir }
